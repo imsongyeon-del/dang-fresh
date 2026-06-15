@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="댕프레시 - 우리 아이에게 딱 맞는 건강 박스, 매달 집 앞으로 찾아가는 반려견 맞춤 정기 구독 서비스">
+    <title>댕프레시 - 반려견 맞춤 구독 🐶</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Full-screen Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="app-layout">
+        <!-- Header & Progress Tracker -->
+        <header class="main-header">
+            <div class="logo-container">
+                <span class="logo-emoji">🐶</span>
+                <h1 class="logo-text">댕프레시 <span class="logo-sub">Dang-Fresh</span></h1>
+            </div>
+            <p class="header-tagline">우리 아이에게 딱 맞는 건강 박스, 매달 집 앞으로</p>
+            
+            <!-- Step Progress Bar -->
+            <div class="progress-container" id="progress-bar-container">
+                <div class="progress-bar" id="progress-indicator"></div>
+                <div class="progress-steps">
+                    <div class="progress-step active" data-step="1">
+                        <span class="step-num">1</span>
+                        <span class="step-label">이름 등록</span>
+                    </div>
+                    <div class="progress-step" data-step="2">
+                        <span class="step-num">2</span>
+                        <span class="step-label">나이 선택</span>
+                    </div>
+                    <div class="progress-step" data-step="3">
+                        <span class="step-num">3</span>
+                        <span class="step-label">고민 선택</span>
+                    </div>
+                    <div class="progress-step" data-step="5">
+                        <span class="step-num">4</span>
+                        <span class="step-label">맞춤 식단</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Wizard Container -->
+        <main class="wizard-container">
+            <!-- STEP 1: Name & Avatar Selection -->
+            <section class="step-card active" id="step-1">
+                <div class="card-header">
+                    <span class="badge">START</span>
+                    <h2>반려견 프로필 등록</h2>
+                    <p>우리 소중한 아이의 정보를 입력해 주세요.</p>
+                </div>
+                
+                <div class="input-group">
+                    <label for="dog-name" class="input-label">강아지의 이름은 무엇인가요? <span class="required">*</span></label>
+                    <input type="text" id="dog-name" placeholder="예: 초코, 코코, 보리" maxlength="15" autocomplete="off">
+                    <div class="error-msg" id="name-error">이름을 입력해 주세요!</div>
+                </div>
+
+                <!-- Avatar Selection (Pure SVG representations of dog faces/breeds) -->
+                <div class="avatar-group">
+                    <label class="input-label">아이와 닮은 캐릭터를 골라주세요 (선택)</label>
+                    <div class="avatar-grid">
+                        <div class="avatar-card active" data-avatar="poodle">
+                            <div class="avatar-icon-wrapper p-poodle">
+                                <!-- Poodle SVG -->
+                                <svg viewBox="0 0 100 100" class="avatar-svg">
+                                    <circle cx="50" cy="50" r="40" fill="#FFE5D9" />
+                                    <!-- curly head -->
+                                    <circle cx="50" cy="38" r="16" fill="#D3A27F" />
+                                    <circle cx="38" cy="38" r="10" fill="#D3A27F" />
+                                    <circle cx="62" cy="38" r="10" fill="#D3A27F" />
+                                    <!-- ears -->
+                                    <path d="M25,40 Q20,55 26,65 Q32,55 30,40 Z" fill="#D3A27F" />
+                                    <path d="M75,40 Q80,55 74,65 Q68,55 70,40 Z" fill="#D3A27F" />
+                                    <!-- muzzle -->
+                                    <ellipse cx="50" cy="54" rx="12" ry="10" fill="#E8C3A9" />
+                                    <!-- nose -->
+                                    <polygon points="46,50 54,50 50,56" fill="#2D2D2D" />
+                                    <!-- eyes -->
+                                    <circle cx="43" cy="45" r="3" fill="#2D2D2D" />
+                                    <circle cx="57" cy="45" r="3" fill="#2D2D2D" />
+                                    <!-- blush -->
+                                    <circle cx="37" cy="52" r="3" fill="#FFB3B3" opacity="0.6" />
+                                    <circle cx="63" cy="52" r="3" fill="#FFB3B3" opacity="0.6" />
+                                </svg>
+                            </div>
+                            <span class="avatar-name">푸들</span>
+                        </div>
+
+                        <div class="avatar-card" data-avatar="retriever">
+                            <div class="avatar-icon-wrapper p-retriever">
+                                <!-- Golden Retriever SVG -->
+                                <svg viewBox="0 0 100 100" class="avatar-svg">
+                                    <circle cx="50" cy="50" r="40" fill="#FFF2CC" />
+                                    <!-- ears -->
+                                    <path d="M20,38 Q16,56 26,64 Q28,52 28,40 Z" fill="#E6B8AF" />
+                                    <path d="M80,38 Q84,56 74,64 Q72,52 72,40 Z" fill="#E6B8AF" />
+                                    <!-- head shape -->
+                                    <circle cx="50" cy="48" r="20" fill="#F4CCCC" />
+                                    <!-- muzzle -->
+                                    <ellipse cx="50" cy="56" rx="14" ry="11" fill="#FFF" />
+                                    <!-- nose -->
+                                    <polygon points="45,51 55,51 50,58" fill="#2D2D2D" />
+                                    <!-- eyes -->
+                                    <circle cx="42" cy="44" r="3.5" fill="#2D2D2D" />
+                                    <circle cx="58" cy="44" r="3.5" fill="#2D2D2D" />
+                                    <!-- blush -->
+                                    <circle cx="36" cy="52" r="3" fill="#FFB3B3" opacity="0.6" />
+                                    <circle cx="64" cy="52" r="3" fill="#FFB3B3" opacity="0.6" />
+                                </svg>
+                            </div>
+                            <span class="avatar-name">리트리버</span>
+                        </div>
+
+                        <div class="avatar-card" data-avatar="pomeranian">
+                            <div class="avatar-icon-wrapper p-pom">
+                                <!-- Pomeranian SVG -->
+                                <svg viewBox="0 0 100 100" class="avatar-svg">
+                                    <circle cx="50" cy="50" r="40" fill="#FFF" />
+                                    <!-- fluffy ears -->
+                                    <polygon points="26,34 38,24 42,40" fill="#FFE5A3" />
+                                    <polygon points="74,34 62,24 58,40" fill="#FFE5A3" />
+                                    <!-- ear inner -->
+                                    <polygon points="29,33 36,27 38,37" fill="#F4CCCC" />
+                                    <polygon points="71,33 64,27 62,37" fill="#F4CCCC" />
+                                    <!-- face circle fluffy -->
+                                    <circle cx="50" cy="48" r="22" fill="#FFE5A3" />
+                                    <ellipse cx="50" cy="56" rx="10" ry="8" fill="#FFF" />
+                                    <!-- nose -->
+                                    <circle cx="50" cy="52" r="3" fill="#2D2D2D" />
+                                    <!-- eyes -->
+                                    <circle cx="41" cy="43" r="3" fill="#2D2D2D" />
+                                    <circle cx="59" cy="43" r="3" fill="#2D2D2D" />
+                                    <!-- blush -->
+                                    <circle cx="35" cy="50" r="3" fill="#FFB3B3" opacity="0.8" />
+                                    <circle cx="65" cy="50" r="3" fill="#FFB3B3" opacity="0.8" />
+                                </svg>
+                            </div>
+                            <span class="avatar-name">포메</span>
+                        </div>
+
+                        <div class="avatar-card" data-avatar="beagle">
+                            <div class="avatar-icon-wrapper p-beagle">
+                                <!-- Beagle SVG -->
+                                <svg viewBox="0 0 100 100" class="avatar-svg">
+                                    <circle cx="50" cy="50" r="40" fill="#E2C9B3" />
+                                    <!-- patch around eyes -->
+                                    <ellipse cx="38" cy="45" rx="12" ry="14" fill="#B48A64" />
+                                    <ellipse cx="62" cy="45" rx="12" ry="14" fill="#B48A64" />
+                                    <!-- center strip -->
+                                    <path d="M44,25 L56,25 L54,58 L46,58 Z" fill="#FFF" />
+                                    <!-- ears -->
+                                    <path d="M22,34 Q10,48 20,68 Q28,68 28,45 Z" fill="#78593E" />
+                                    <path d="M78,34 Q90,48 80,68 Q72,68 72,45 Z" fill="#78593E" />
+                                    <!-- muzzle -->
+                                    <ellipse cx="50" cy="56" rx="11" ry="9" fill="#FFF" />
+                                    <!-- nose -->
+                                    <polygon points="46,51 54,51 50,57" fill="#2D2D2D" />
+                                    <!-- eyes -->
+                                    <circle cx="41" cy="45" r="3.5" fill="#2D2D2D" />
+                                    <circle cx="59" cy="45" r="3.5" fill="#2D2D2D" />
+                                </svg>
+                            </div>
+                            <span class="avatar-name">비글</span>
+                        </div>
+
+                        <div class="avatar-card" data-avatar="maltese">
+                            <div class="avatar-icon-wrapper p-maltese">
+                                <!-- Maltese SVG -->
+                                <svg viewBox="0 0 100 100" class="avatar-svg">
+                                    <circle cx="50" cy="50" r="40" fill="#FFFBF7" />
+                                    <!-- floppy ears -->
+                                    <path d="M22,35 Q14,48 24,65 Q28,52 28,35 Z" fill="#FFF" />
+                                    <path d="M78,35 Q86,48 76,65 Q72,52 72,35 Z" fill="#FFF" />
+                                    <!-- head fluffy circle -->
+                                    <circle cx="50" cy="46" r="21" fill="#FFF" />
+                                    <!-- muzzle -->
+                                    <ellipse cx="50" cy="54" rx="10" ry="8" fill="#FFF" />
+                                    <!-- nose -->
+                                    <circle cx="50" cy="51" r="3" fill="#2D2D2D" />
+                                    <!-- eyes -->
+                                    <circle cx="41" cy="42" r="3.5" fill="#2D2D2D" />
+                                    <circle cx="59" cy="42" r="3.5" fill="#2D2D2D" />
+                                    <!-- blush -->
+                                    <circle cx="36" cy="49" r="3.5" fill="#FFB3B3" opacity="0.75" />
+                                    <circle cx="64" cy="49" r="3.5" fill="#FFB3B3" opacity="0.75" />
+                                    <!-- cute red bow on head -->
+                                    <path d="M46,24 L54,24 L52,28 L48,28 Z" fill="#FF4D4D" />
+                                    <circle cx="46" cy="24" r="3" fill="#FF4D4D" />
+                                    <circle cx="54" cy="24" r="3" fill="#FF4D4D" />
+                                    <circle cx="50" cy="24" r="2" fill="#FFCC00" />
+                                </svg>
+                            </div>
+                            <span class="avatar-name">말티즈</span>
+                        </div>
+
+                        <div class="avatar-card" data-avatar="other">
+                            <div class="avatar-icon-wrapper p-other">
+                                <!-- Other Dog / Question Mark SVG -->
+                                <svg viewBox="0 0 100 100" class="avatar-svg">
+                                    <circle cx="50" cy="50" r="40" fill="#E5E7EB" />
+                                    <path d="M50,30 Q38,30 38,42 Q38,54 50,54 Q62,54 62,42 Q62,30 50,30 Z" fill="#9CA3AF" />
+                                    <circle cx="34" cy="26" r="8" fill="#9CA3AF" />
+                                    <circle cx="66" cy="28" r="8" fill="#9CA3AF" />
+                                    <text x="50" y="47" font-size="16" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" fill="white" text-anchor="middle">?</text>
+                                </svg>
+                            </div>
+                            <span class="avatar-name">기타</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Breed Input (hidden by default, loaded with API breeds) -->
+                <div class="input-group" id="custom-breed-group" style="display: none; margin-top: 25px; margin-bottom: 0;">
+                    <label for="breed-select" class="input-label">견종을 선택해 주세요 <span class="required">*</span></label>
+                    <div class="select-loading-spinner" id="breed-loading-spinner" style="display: none;">
+                        <i data-lucide="loader" class="animate-spin text-accent"></i> <span>공공데이터에서 견종 리스트를 불러오는 중...</span>
+                    </div>
+                    <select id="breed-select">
+                        <option value="">-- 견종 선택 --</option>
+                        <!-- Dynamic options loaded via API -->
+                        <option value="direct">직접 입력하기</option>
+                    </select>
+                    
+                    <!-- Direct input box showing up only if they choose 'direct' -->
+                    <div id="direct-breed-input-wrapper" style="display: none; margin-top: 12px;">
+                        <input type="text" id="custom-breed" placeholder="견종명을 직접 입력해 주세요 (예: 시츄, 진돗개)" maxlength="20" autocomplete="off">
+                    </div>
+                    
+                    <div class="error-msg" id="custom-breed-error">견종을 선택하거나 입력해 주세요!</div>
+                </div>
+
+                <div class="button-footer">
+                    <button class="btn btn-primary" id="btn-to-step2">
+                        다음 단계로 <i data-lucide="arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- STEP 2: Age Group Selection -->
+            <section class="step-card" id="step-2">
+                <div class="card-header">
+                    <span class="badge">STEP 2</span>
+                    <h2>우리 강아지의 나이대</h2>
+                    <p>나이에 따라 필요한 영양 설계와 사료의 부드러움이 달라집니다.</p>
+                </div>
+
+                <div class="card-options-grid">
+                    <div class="option-card active" data-value="puppy">
+                        <div class="option-icon">🍼</div>
+                        <div class="option-content">
+                            <h3>1세 미만 퍼피</h3>
+                            <p>성장기에 꼭 필요한 높은 칼로리와 풍부한 칼슘 영양 공급이 핵심입니다.</p>
+                        </div>
+                        <div class="select-indicator"><i data-lucide="check"></i></div>
+                    </div>
+
+                    <div class="option-card" data-value="adult">
+                        <div class="option-icon">🍖</div>
+                        <div class="option-content">
+                            <h3>1~7세 성견</h3>
+                            <p>에너지 밸런스와 비만 예방, 체력 유지를 위한 다방면 골고루 영양식이 추천됩니다.</p>
+                        </div>
+                        <div class="select-indicator"><i data-lucide="check"></i></div>
+                    </div>
+
+                    <div class="option-card" data-value="senior">
+                        <div class="option-icon">🍵</div>
+                        <div class="option-content">
+                            <h3>7세 이상 노령견</h3>
+                            <p>소화력이 약해져 기력 회복을 도울 수 있는 소화가 잘되는 부드러운 화식이 필요합니다.</p>
+                        </div>
+                        <div class="select-indicator"><i data-lucide="check"></i></div>
+                    </div>
+                </div>
+
+                <div class="button-footer">
+                    <button class="btn btn-secondary btn-prev" data-target="1">
+                        <i data-lucide="arrow-left"></i> 이전
+                    </button>
+                    <button class="btn btn-primary" id="btn-to-step3">
+                        다음 단계로 <i data-lucide="arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- STEP 3: Health Concerns -->
+            <section class="step-card" id="step-3">
+                <div class="card-header">
+                    <span class="badge">STEP 3</span>
+                    <h2>가장 고민되는 건강 부위</h2>
+                    <p>선택하신 건강 상태에 맞춰 특별한 영양제와 전용 간식을 맞춤 추가해 드려요.</p>
+                </div>
+
+                <div class="card-options-grid cols-2">
+                    <div class="option-card active" data-value="general">
+                        <div class="option-icon">💚</div>
+                        <div class="option-content">
+                            <h3>일반 건강식</h3>
+                            <p>특이 고민 없음 / 종합 면역 케어</p>
+                        </div>
+                        <div class="select-indicator"><i data-lucide="check"></i></div>
+                    </div>
+
+                    <div class="option-card" data-value="joint">
+                        <div class="option-icon">🦴</div>
+                        <div class="option-content">
+                            <h3>관절 / 슬개골 케어</h3>
+                            <p>슬개골 약한 반려견 및 관절 연골 보호</p>
+                        </div>
+                        <div class="select-indicator"><i data-lucide="check"></i></div>
+                    </div>
+
+                    <div class="option-card" data-value="skin">
+                        <div class="option-icon">🐟</div>
+                        <div class="option-content">
+                            <h3>피부 / 눈물 케어</h3>
+                            <p>피부염 완화, 풍성한 피모, 눈물 자국 개선</p>
+                        </div>
+                        <div class="select-indicator"><i data-lucide="check"></i></div>
+                    </div>
+
+                    <div class="option-card" data-value="digest">
+                        <div class="option-icon">🧬</div>
+                        <div class="option-content">
+                            <h3>소화 / 장 건강</h3>
+                            <p>무른 변 해결, 원활한 가스 배출 및 소화 흡수</p>
+                        </div>
+                        <div class="select-indicator"><i data-lucide="check"></i></div>
+                    </div>
+                </div>
+
+                <div class="button-footer">
+                    <button class="btn btn-secondary btn-prev" data-target="2">
+                        <i data-lucide="arrow-left"></i> 이전
+                    </button>
+                    <button class="btn btn-primary" id="btn-to-step4">
+                        ✨ 맞춤 식단 분석하기 <i data-lucide="sparkles"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- STEP 4: AI Analysis Loading Screen -->
+            <section class="step-card loading-step" id="step-4">
+                <div class="loader-content">
+                    <div class="paw-loader">
+                        <svg viewBox="0 0 100 100" class="paw-svg">
+                            <!-- Center pad -->
+                            <path d="M50,45 C35,45 28,60 35,72 C42,84 58,84 65,72 C72,60 65,45 50,45 Z" fill="currentColor" />
+                            <!-- Toes -->
+                            <circle cx="28" cy="40" r="10" fill="currentColor" />
+                            <circle cx="43" cy="26" r="11" fill="currentColor" />
+                            <circle cx="57" cy="26" r="11" fill="currentColor" />
+                            <circle cx="72" cy="40" r="10" fill="currentColor" />
+                        </svg>
+                    </div>
+                    <h2 class="loading-title"><span id="dog-loading-name">초코</span>의 맞춤 영양 설계 분석 중</h2>
+                    <p class="loading-subtitle" id="loading-subtext">강아지 신체 발달 데이터를 기반으로 영양 비율을 산정하고 있습니다...</p>
+                    <div class="progress-bar-small">
+                        <div class="progress-bar-small-fill" id="loading-progress"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STEP 5: Results Screen (Personalized Box) -->
+            <section class="step-card result-step" id="step-5">
+                <div class="card-header text-center">
+                    <span class="badge success-badge">ANALYSIS COMPLETE</span>
+                    <h2 id="result-congrats-title">🎉 초코만을 위한 웰니스 맞춤 박스가 완성되었습니다!</h2>
+                    <p>댕프레시 영양사가 꼼꼼히 설계한 우리 아이 솔루션입니다.</p>
+                </div>
+
+                <div class="result-layout">
+                    <!-- Recommended Box Package Content -->
+                    <div class="result-box-panel">
+                        <div class="box-preview-container">
+                            <div class="box-header-ribbon">댕프레시 1:1 맞춤 배송 박스</div>
+                            <img src="images/premium_box.png" alt="댕프레시 맞춤 배송 박스" class="box-visual-image">
+                            <div class="box-badge-container">
+                                <div class="box-badge-label" id="box-lbl-name">초코용 맞춤 박스</div>
+                            </div>
+                        </div>
+
+                        <!-- Breed Genetic Alert Banner -->
+                        <div id="breed-genetic-banner" class="breed-genetic-banner"></div>
+
+                        <h3 class="panel-section-title"><i data-lucide="package"></i> 추천 구성품 상세</h3>
+                        
+                        <div class="recommendation-list" id="recommendation-items-container">
+                            <!-- Dynamically generated items -->
+                        </div>
+                    </div>
+
+                    <!-- Subscription Price and Details Card -->
+                    <div class="result-price-panel">
+                        <div class="pricing-card">
+                            <div class="pricing-badge">매월 자동 정기 구독</div>
+                            <div class="pricing-metric">
+                                <span class="price-label">정기 구독가</span>
+                                <div class="price-value">월 39,000원 <span class="original-price">54,000원</span></div>
+                            </div>
+                            
+                            <ul class="pricing-benefits">
+                                <li><i data-lucide="truck" class="icon-benefit"></i> <span><strong>무료 배송</strong> 및 예약 배송일 지정 가능</span></li>
+                                <li><i data-lucide="calendar" class="icon-benefit"></i> <span>첫 구독 선물: <strong>식기 세트 & 장난감</strong> 증정</span></li>
+                                <li><i data-lucide="shield-check" class="icon-benefit"></i> <span>먹지 않으면 <strong>100% 안심 교환/환불</strong></span></li>
+                                <li><i data-lucide="x-circle" class="icon-benefit"></i> <span>위약금 없는 언제든 <strong>자유로운 해지/건너뛰기</strong></span></li>
+                            </ul>
+                            
+                            <!-- Upselling Option Box -->
+                            <div class="upsell-container">
+                                <label class="upsell-label" for="upsell-checkbox">
+                                    <div class="upsell-header">
+                                        <span class="upsell-badge">SPECIAL 한정</span>
+                                        <strong>이번 달 한정판 기획팩 추가</strong>
+                                    </div>
+                                    <div class="upsell-body">
+                                        <input type="checkbox" id="upsell-checkbox">
+                                        <span class="upsell-text">한정판 수제 노즈워크 토이 & 프리미엄 한우 우둔살 져키 추가 <strong>(+4,900원)</strong></span>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="checkout-delivery-note">
+                                <i data-lucide="clock"></i> <span>지금 신청 시 <strong>내일 오전 배송 시작</strong></span>
+                            </div>
+
+                            <button class="btn btn-primary btn-block btn-pulse" id="btn-subscribe">
+                                <i data-lucide="credit-card"></i> 이 구성으로 정기 구독 신청하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-footer result-footer">
+                    <button class="btn btn-secondary btn-prev" data-target="3">
+                        <i data-lucide="arrow-left"></i> 정보 수정하기
+                    </button>
+                </div>
+            </section>
+
+            <!-- STEP 6: Checkout Success Screen -->
+            <section class="step-card success-step" id="step-6">
+                <div class="success-check-wrapper">
+                    <div class="success-check-ring">
+                        <i data-lucide="check" class="success-check-icon"></i>
+                    </div>
+                </div>
+
+                <h2 class="success-title">정기 구독 신청이 성공적으로 접수되었습니다!</h2>
+                <p class="success-subtitle"><span id="success-dog-name">초코</span>의 댕프레시 웰니스 라이프가 시작되었습니다. 🧡</p>
+
+                <div class="success-delivery-tracker">
+                    <h3 class="tracker-title">📦 실시간 주문 & 배송 일정</h3>
+                    <div class="tracker-steps">
+                        <div class="tracker-step completed">
+                            <div class="tracker-circle"><i data-lucide="check"></i></div>
+                            <div class="tracker-info">
+                                <h4>프로필 분석 완료</h4>
+                                <p>맞춤 레시피 확정</p>
+                            </div>
+                        </div>
+                        <div class="tracker-step current">
+                            <div class="tracker-circle">2</div>
+                            <div class="tracker-info">
+                                <h4>신선 포장 진행 중</h4>
+                                <p>저온 살균 및 위생 포장</p>
+                            </div>
+                        </div>
+                        <div class="tracker-step">
+                            <div class="tracker-circle">3</div>
+                            <div class="tracker-info">
+                                <h4>출고 완료 예정</h4>
+                                <p id="delivery-date-text">오늘 밤 일괄 출고</p>
+                            </div>
+                        </div>
+                        <div class="tracker-step">
+                            <div class="tracker-circle">4</div>
+                            <div class="tracker-info">
+                                <h4>집 앞 배송 도착</h4>
+                                <p id="arrival-date-text">내일 아침 7시 전 배송 완료</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Details Receipt -->
+                <div class="receipt-card">
+                    <h4 class="receipt-title"><i data-lucide="receipt"></i> 주문 내역 요약</h4>
+                    <div class="receipt-row">
+                        <span>결제 수단</span>
+                        <strong>간편 카드 결제 (매월 자동)</strong>
+                    </div>
+                    <div class="receipt-row">
+                        <span>구독 금액</span>
+                        <span class="receipt-price" id="receipt-price">월 39,000원 (배송비 무료)</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span>등록 반려견</span>
+                        <strong id="receipt-dog-info">초코 (푸들)</strong>
+                    </div>
+                    <div class="receipt-row">
+                        <span>첫 배송 예정일</span>
+                        <strong id="first-delivery-day" class="text-accent">2026년 6월 16일 (화)</strong>
+                    </div>
+                </div>
+
+                <div class="success-actions">
+                    <button class="btn btn-secondary" id="btn-reset">
+                        <i data-lucide="rotate-ccw"></i> 다른 강아지 등록하기
+                    </button>
+                    <button class="btn btn-primary" onclick="alert('마이페이지 서비스 준비 중입니다. 신선하게 포장 중인 아이 식단 배송 일정을 기다려 주세요!');">
+                        마이페이지 바로가기 <i data-lucide="user"></i>
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>© 2026 댕프레시 (Dang-Fresh). All Rights Reserved.</p>
+            <p class="footer-links">이용약관 | 개인정보처리방침 | 구독고객센터 1544-0000</p>
+        </footer>
+    </div>
+    <!-- Script -->
+    <script src="script.js"></script>
+</body>
+</html>
