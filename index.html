@@ -27,6 +27,12 @@
             </div>
             <p class="header-tagline">우리 아이에게 딱 맞는 건강 박스, 매달 집 앞으로</p>
             
+            <!-- Navigation Tabs -->
+            <nav class="app-nav">
+                <button class="nav-tab active" id="tab-recommend"><i data-lucide="sparkles"></i> 맞춤 식단 추천</button>
+                <button class="nav-tab" id="tab-mypage"><i data-lucide="user"></i> 마이페이지</button>
+            </nav>
+            
             <!-- Step Progress Bar -->
             <div class="progress-container" id="progress-bar-container">
                 <div class="progress-bar" id="progress-indicator"></div>
@@ -408,7 +414,7 @@
                             <div class="pricing-badge">매월 자동 정기 구독</div>
                             <div class="pricing-metric">
                                 <span class="price-label">정기 구독가</span>
-                                <div class="price-value">월 39,000원 <span class="original-price">54,000원</span></div>
+                                <div class="price-value">월 48,900원 <span class="original-price">63,900원</span></div>
                             </div>
                             
                             <ul class="pricing-benefits">
@@ -418,26 +424,70 @@
                                 <li><i data-lucide="x-circle" class="icon-benefit"></i> <span>위약금 없는 언제든 <strong>자유로운 해지/건너뛰기</strong></span></li>
                             </ul>
                             
-                            <!-- Upselling Option Box -->
-                            <div class="upsell-container">
-                                <label class="upsell-label" for="upsell-checkbox">
-                                    <div class="upsell-header">
-                                        <span class="upsell-badge">SPECIAL 한정</span>
-                                        <strong>이번 달 한정판 기획팩 추가</strong>
-                                    </div>
-                                    <div class="upsell-body">
-                                        <input type="checkbox" id="upsell-checkbox">
-                                        <span class="upsell-text">한정판 수제 노즈워크 토이 & 프리미엄 한우 우둔살 져키 추가 <strong>(+4,900원)</strong></span>
-                                    </div>
-                                </label>
+                            <!-- Extra Items Selection Group -->
+                            <div class="extra-items-section">
+                                <h4 class="extra-section-title">➕ 박스에 추가 구성품 더 넣기 (원하는 만큼!)</h4>
+                                <p class="extra-section-desc">기본 박스 외에 우리 아이가 좋아하는 간식과 용품을 추가해 보세요.</p>
+                                
+                                <div class="extra-items-list">
+                                    <label class="extra-item-card" for="extra-beef">
+                                        <input type="checkbox" id="extra-beef" class="extra-checkbox" data-price="7900" data-name="한우 우둔살 동결건조 간식">
+                                        <div class="extra-item-info">
+                                            <span class="extra-item-emoji">🥩</span>
+                                            <div class="extra-item-text">
+                                                <strong>한우 우둔살 동결건조 간식</strong>
+                                                <span class="extra-item-price">+7,900원</span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    
+                                    <label class="extra-item-card" for="extra-chew">
+                                        <input type="checkbox" id="extra-chew" class="extra-checkbox" data-price="5500" data-name="치석 제거 덴탈 껌 10개입">
+                                        <div class="extra-item-info">
+                                            <span class="extra-item-emoji">🦷</span>
+                                            <div class="extra-item-text">
+                                                <strong>치석 제거 덴탈 껌 10개입</strong>
+                                                <span class="extra-item-price">+5,500원</span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    
+                                    <label class="extra-item-card" for="extra-toy">
+                                        <input type="checkbox" id="extra-toy" class="extra-checkbox" data-price="4900" data-name="스트레스 해소 바스락 장난감">
+                                        <div class="extra-item-info">
+                                            <span class="extra-item-emoji">🧸</span>
+                                            <div class="extra-item-text">
+                                                <strong>스트레스 해소 바스락 장난감</strong>
+                                                <span class="extra-item-price">+4,900원</span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
                             </div>
+                            
+                            <!-- Real-time Receipt Details -->
+                            <div class="receipt-details-box">
+                                <h4 class="receipt-details-title"><i data-lucide="receipt"></i> 이번 달 결제 상세 내역</h4>
+                                <div class="receipt-details-rows" id="receipt-details-rows">
+                                    <!-- Dynamic rows generated by JS -->
+                                </div>
+                                <div class="receipt-details-total">
+                                    <span>이번 달 최종 결제 금액 :</span>
+                                    <strong id="receipt-total-price">48,900원</strong>
+                                </div>
+                                <div class="receipt-details-caption" id="receipt-details-caption">
+                                    ※ 매달 기본 구독료 48,900원이 정기 결제됩니다.
+                                </div>
+                            </div>
+
+                            <div id="receipt-warning-alert" class="receipt-warning-alert" style="display: none;"></div>
 
                             <div class="checkout-delivery-note">
                                 <i data-lucide="clock"></i> <span>지금 신청 시 <strong>내일 오전 배송 시작</strong></span>
                             </div>
 
                             <button class="btn btn-primary btn-block btn-pulse" id="btn-subscribe">
-                                <i data-lucide="credit-card"></i> 이 구성으로 정기 구독 신청하기
+                                <i data-lucide="credit-card"></i> 48,900원 결제 및 구독 시작
                             </button>
                         </div>
                     </div>
@@ -504,7 +554,7 @@
                     </div>
                     <div class="receipt-row">
                         <span>구독 금액</span>
-                        <span class="receipt-price" id="receipt-price">월 39,000원 (배송비 무료)</span>
+                        <span class="receipt-price" id="receipt-price">월 48,900원 (배송비 무료)</span>
                     </div>
                     <div class="receipt-row">
                         <span>등록 반려견</span>
@@ -520,12 +570,142 @@
                     <button class="btn btn-secondary" id="btn-reset">
                         <i data-lucide="rotate-ccw"></i> 다른 강아지 등록하기
                     </button>
-                    <button class="btn btn-primary" onclick="alert('마이페이지 서비스 준비 중입니다. 신선하게 포장 중인 아이 식단 배송 일정을 기다려 주세요!');">
+                    <button class="btn btn-primary" id="btn-goto-mypage">
                         마이페이지 바로가기 <i data-lucide="user"></i>
                     </button>
                 </div>
             </section>
         </main>
+
+        <!-- My Page Container -->
+        <div id="mypage-container" class="mypage-container" style="display: none;">
+            <!-- State A: Active Subscription -->
+            <div id="mypage-active" class="mypage-card" style="display: none;">
+                <div class="card-header">
+                    <span class="badge success-badge">MY ACCOUNT</span>
+                    <h2>👤 마이페이지</h2>
+                    <p>나의 정기 구독 및 배송 관리</p>
+                </div>
+                
+                <div class="mypage-grid">
+                    <!-- Pet Info & Subscription Info -->
+                    <div class="mypage-info-section">
+                        <div class="mypage-subcard">
+                            <h3>🐾 반려동물 정보</h3>
+                            <div class="info-row">
+                                <span class="info-label">이름</span>
+                                <strong id="mypage-dog-name">초코</strong>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">견종</span>
+                                <strong id="mypage-dog-breed">푸들</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="mypage-subcard mypage-payment-details">
+                            <h3>💳 구독 및 결제 정보</h3>
+                            <div class="mypage-payment-grid">
+                                <div class="mypage-payment-col">
+                                    <h4 class="mypage-col-title">🐾 이용 중인 상품</h4>
+                                    <div class="product-info-row">
+                                        <span class="product-info-header">📦 기본 패키지</span>
+                                        <strong id="mypage-box-type" class="text-accent">🦴 슬개골 튼튼 관절 케어 박스</strong>
+                                        <span class="badge-sub">정기 구독</span>
+                                    </div>
+                                    <div id="mypage-extra-items-row" class="product-info-row" style="display: none; margin-top: 10px;">
+                                        <span class="product-info-header">➕ 이번 달 추가 구성품</span>
+                                        <strong id="mypage-extra-items-text">-</strong>
+                                        <span class="badge-once">이번 달만 배송</span>
+                                    </div>
+                                </div>
+                                <div class="mypage-payment-col">
+                                    <h4 class="mypage-col-title">💵 결제 금액 상세</h4>
+                                    <div id="mypage-price-details">
+                                        <!-- Will be dynamically populated by JS -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Delivery Status -->
+                    <div class="mypage-delivery-section">
+                        <div class="mypage-subcard">
+                            <h3>🚚 실시간 배송 현황</h3>
+                            <div class="info-row">
+                                <span class="info-label">다음 배송 예정일</span>
+                                <strong id="mypage-delivery-date" class="text-accent">2026년 6월 22일</strong>
+                            </div>
+                            
+                            <!-- Progress Bar -->
+                            <div class="mypage-progress-container">
+                                <div class="mypage-progress-bar">
+                                    <div class="mypage-progress-fill" style="width: 40%;"></div>
+                                </div>
+                                <span class="mypage-progress-caption">현재 상태: 📦 [배송 준비 중] - 상품을 정성스럽게 포장하고 있어요.</span>
+                            </div>
+                        </div>
+
+                        <!-- Next Month Delivery Config Card -->
+                        <div class="mypage-subcard next-month-config-card">
+                            <h3>📦 다음 달 배송 구성 관리</h3>
+                            <p class="config-desc">혹시 지난달에 받은 간식이 아직 많이 남아있나요? 아래 옵션을 확인해 보세요.</p>
+                            
+                            <label class="config-checkbox-label" for="swap-necessity">
+                                <input type="checkbox" id="swap-necessity" class="config-checkbox">
+                                <span class="checkbox-custom-text">🧻 이번 달은 간식 대신 <strong>[프리미엄 배변패드 10장 + 배변봉투]</strong>로 변경해서 받기</span>
+                            </label>
+                            
+                            <hr class="divider">
+                            
+                            <div class="config-grid">
+                                <div class="config-col">
+                                    <h4 class="config-sub-title">🎯 다음 달 최종 배송 품목</h4>
+                                    <ul class="config-item-list" id="mypage-delivery-items">
+                                        <!-- Will be dynamically populated based on checkbox state -->
+                                    </ul>
+                                </div>
+                                <div class="config-col">
+                                    <h4 class="config-sub-title">💵 결제 금액 정보</h4>
+                                    <div class="payment-amount-row">
+                                        <span>자동 결제 예정 금액</span>
+                                        <strong class="metric-price">48,900원</strong>
+                                    </div>
+                                    <div id="mypage-config-caption" class="config-caption">
+                                        ※ 매달 기본 구독료 48,900원이 정상 결제됩니다.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Subscription Manage -->
+                <div class="mypage-manage-section">
+                    <h3>⚙️ 구독 관리</h3>
+                    <p class="manage-desc">구독 주기 변경 및 주소지 관리가 가능합니다. 구독을 중단하시려면 아래 버튼을 눌러주세요.</p>
+                    <button class="btn" id="btn-cancel-subscription" style="color: #EF4444; border: 1px solid #FCA5A5; background: #FEF2F2;">
+                        <i data-lucide="x-circle"></i> 정기 구독 해지하기
+                    </button>
+                </div>
+            </div>
+            
+            <!-- State B: No Subscription -->
+            <div id="mypage-inactive" class="mypage-card" style="display: none;">
+                <div class="card-header text-center">
+                    <span class="badge">MY ACCOUNT</span>
+                    <h2>👤 마이페이지</h2>
+                </div>
+                <div class="mypage-empty-state">
+                    <span class="empty-emoji">🐶</span>
+                    <h3>현재 구독 중인 상품이 없습니다.</h3>
+                    <p>댕프레시의 1:1 맞춤 영양 박스를 구독하고 우리 아이의 건강을 챙겨주세요!</p>
+                    <button class="btn btn-primary" id="btn-mypage-to-wizard">
+                        <i data-lucide="sparkles"></i> 첫 맞춤 식단 분석하기
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <!-- Footer -->
         <footer class="app-footer">

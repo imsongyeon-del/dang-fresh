@@ -10,7 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ageGroup: 'puppy', // puppy, adult, senior
         healthConcerns: ['general'], // Array for multi-select
         upsellSelected: false, // upsell state
-        currentStep: 1
+        currentStep: 1,
+        isSubscribed: false, // subscription state
+        subBoxTitle: '', // subscription box title
+        totalCalculatedPrice: 48900
     };
 
     // --- DOM Elements ---
@@ -27,6 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressIndicator = document.getElementById('progress-indicator');
     const progressSteps = document.querySelectorAll('.progress-step');
 
+    // Navigation Tabs Elements
+    const tabRecommend = document.getElementById('tab-recommend');
+    const tabMypage = document.getElementById('tab-mypage');
+    const mypageContainer = document.getElementById('mypage-container');
+    const wizardContainer = document.querySelector('.wizard-container');
+
     // Inputs
     const dogNameInput = document.getElementById('dog-name');
     const nameError = document.getElementById('name-error');
@@ -37,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const directBreedInputWrapper = document.getElementById('direct-breed-input-wrapper');
     const customBreedInput = document.getElementById('custom-breed');
     const customBreedError = document.getElementById('custom-breed-error');
-    const upsellCheckbox = document.getElementById('upsell-checkbox');
 
     // Step 2 & 3 Option Cards
     const ageCards = document.querySelectorAll('#step-2 .option-card');
@@ -49,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnToStep4 = document.getElementById('btn-to-step4');
     const btnSubscribe = document.getElementById('btn-subscribe');
     const btnReset = document.getElementById('btn-reset');
+    const btnGotoMypage = document.getElementById('btn-goto-mypage');
     const prevButtons = document.querySelectorAll('.btn-prev');
 
     // Dynamic Text Elements
@@ -66,6 +75,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const arrivalDateText = document.getElementById('arrival-date-text');
     const receiptDogInfo = document.getElementById('receipt-dog-info');
     const receiptPrice = document.getElementById('receipt-price');
+
+    // My Page Elements
+    const mypageActive = document.getElementById('mypage-active');
+    const mypageInactive = document.getElementById('mypage-inactive');
+    const mypageDogName = document.getElementById('mypage-dog-name');
+    const mypageDogBreed = document.getElementById('mypage-dog-breed');
+    const mypageBoxType = document.getElementById('mypage-box-type');
+    const mypagePriceDetails = document.getElementById('mypage-price-details');
+    const mypageExtraItemsRow = document.getElementById('mypage-extra-items-row');
+    const mypageExtraItemsText = document.getElementById('mypage-extra-items-text');
+    const mypageDeliveryDate = document.getElementById('mypage-delivery-date');
+    const btnCancelSubscription = document.getElementById('btn-cancel-subscription');
+    const btnMypageToWizard = document.getElementById('btn-mypage-to-wizard');
+
+    // Next Month Config Elements
+    const swapNecessityCheckbox = document.getElementById('swap-necessity');
+    const mypageDeliveryItems = document.getElementById('mypage-delivery-items');
+    const mypageConfigCaption = document.getElementById('mypage-config-caption');
+
+    // Extra Items & Receipt Elements
+    const extraCheckboxes = document.querySelectorAll('.extra-checkbox');
+    const extraItemCards = document.querySelectorAll('.extra-item-card');
+    const receiptDetailsRows = document.getElementById('receipt-details-rows');
+    const receiptTotalPrice = document.getElementById('receipt-total-price');
+    const receiptDetailsCaption = document.getElementById('receipt-details-caption');
 
     // --- Fetch Dog Breeds API ---
     let fetchedBreeds = [];
@@ -179,6 +213,242 @@ document.addEventListener('DOMContentLoaded', () => {
                 stepEl.classList.remove('active');
             }
         });
+    }
+
+    // --- Navigation Tabs Logic & My Page Rendering ---
+    function switchTab(tabId) {
+        if (tabId === 'recommend') {
+            tabRecommend.classList.add('active');
+            tabMypage.classList.remove('active');
+            
+            wizardContainer.style.display = 'block';
+            mypageContainer.style.display = 'none';
+            
+            // Show/hide progress bar as appropriate for the current wizard step
+            updateProgressBar(appState.currentStep);
+        } else if (tabId === 'mypage') {
+            tabRecommend.classList.remove('active');
+            tabMypage.classList.add('active');
+            
+            wizardContainer.style.display = 'none';
+            mypageContainer.style.display = 'block';
+            
+            // Hide progress bar on mypage
+            progressBarContainer.style.opacity = '0';
+            progressBarContainer.style.pointerEvents = 'none';
+            
+            renderMypage();
+        }
+        
+        // Re-initialize dynamic Lucide icons if any
+        lucide.createIcons();
+    }
+
+    function renderMypage() {
+        if (appState.isSubscribed) {
+            mypageActive.style.display = 'block';
+            mypageInactive.style.display = 'none';
+            
+            mypageDogName.textContent = appState.dogName;
+            mypageDogBreed.textContent = getBreedName();
+            mypageBoxType.textContent = appState.subBoxTitle;
+            
+            // Calculate extra items and build text
+            const basePrice = 48900;
+            const extraPrice = appState.totalCalculatedPrice - basePrice;
+            
+            if (extraPrice > 0) {
+                // Gather list of checked extra items
+                const checkedExtras = [];
+                extraCheckboxes.forEach(cb => {
+                    if (cb.checked) {
+                        const name = cb.getAttribute('data-name');
+                        let displayName = name;
+                        if (name.includes('한우')) displayName = '한우 간식';
+                        else if (name.includes('덴탈')) displayName = '덴탈 껌';
+                        else if (name.includes('장난감')) displayName = '장난감';
+                        checkedExtras.push(displayName);
+                    }
+                });
+                
+                if (mypageExtraItemsRow && mypageExtraItemsText) {
+                    mypageExtraItemsRow.style.display = 'flex';
+                    if (checkedExtras.length === 1) {
+                        mypageExtraItemsText.textContent = `${checkedExtras[0]}`;
+                    } else if (checkedExtras.length > 1) {
+                        mypageExtraItemsText.textContent = `${checkedExtras[0]} 외 ${checkedExtras.length - 1}종`;
+                    }
+                }
+                
+                if (mypagePriceDetails) {
+                    mypagePriceDetails.innerHTML = `
+                        <div class="info-row" style="margin-top: 10px;">
+                            <span>▪️ 이번 달 총 결제액:</span>
+                            <strong>${appState.totalCalculatedPrice.toLocaleString()}원</strong>
+                        </div>
+                        <div class="mypage-alert-success">
+                            ↩️ 다음 달 자동 결제 예정액: <strong>${basePrice.toLocaleString()}원</strong>
+                        </div>
+                        <p class="mypage-caption">※ 이번 달 추가된 간식/용품 배송이 끝나면, 다음 달에는 기본 구독료(${basePrice.toLocaleString()}원)만 자동으로 결제됩니다.</p>
+                    `;
+                }
+            } else {
+                if (mypageExtraItemsRow) {
+                    mypageExtraItemsRow.style.display = 'none';
+                }
+                if (mypagePriceDetails) {
+                    mypagePriceDetails.innerHTML = `
+                        <div class="info-row" style="margin-top: 10px;">
+                            <span>▪️ 매월 자동 결제 금액:</span>
+                            <strong>${basePrice.toLocaleString()}원</strong>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Next delivery date calculation (today + 7 days)
+            const today = new Date();
+            const deliveryDate = new Date();
+            deliveryDate.setDate(today.getDate() + 7);
+            
+            const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+            const formattedDate = `${deliveryDate.getFullYear()}년 ${deliveryDate.getMonth() + 1}월 ${deliveryDate.getDate()}일 (${daysOfWeek[deliveryDate.getDay()]})`;
+            mypageDeliveryDate.textContent = formattedDate;
+            
+            // Render next month delivery items config
+            updateDeliveryConfig();
+        } else {
+            mypageActive.style.display = 'none';
+            mypageInactive.style.display = 'block';
+        }
+    }
+
+    // --- Dynamic Next Month Delivery Configuration ---
+    function updateDeliveryConfig() {
+        if (!swapNecessityCheckbox) return;
+
+        const isSenior = appState.ageGroup === 'senior';
+        let html = `
+            <li>${isSenior ? '🍵 맞춤 화식 사료' : '🌾 맞춤 건식 사료'} <span class="badge-sub" style="margin-top: 0;">정기 구독</span></li>
+            <li>🦴 유전 질환 맞춤형 영양제 <span class="badge-sub" style="margin-top: 0;">정기 구독</span></li>
+        `;
+
+        const labelWrapper = swapNecessityCheckbox.closest('.config-checkbox-label');
+        if (labelWrapper) {
+            labelWrapper.classList.toggle('checked', swapNecessityCheckbox.checked);
+        }
+
+        if (swapNecessityCheckbox.checked) {
+            html += `
+                <div class="config-success-box">
+                    🔄 <strong>교체 완료:</strong> 간식 대신 <strong>[배변패드 10장 + 배변봉투]</strong>가 배송됩니다.
+                </div>
+            `;
+            if (mypageConfigCaption) {
+                mypageConfigCaption.innerHTML = `ℹ️ 품목 교체로 인한 추가 비용은 없습니다. 다음 달 배송이 끝나면 다다음 달에는 다시 기본 간식 구성으로 자동 리셋됩니다.`;
+            }
+        } else {
+            html += `
+                <li>🥩 이번 달 한정 수제 간식 3종 <span class="badge-sub" style="background:#F3F4F6;color:#374151;border-color:#D1D5DB;margin-top: 0;">기본 구성</span></li>
+            `;
+            if (mypageConfigCaption) {
+                mypageConfigCaption.innerHTML = `※ 매달 기본 구독료 48,900원이 정상 결제됩니다.`;
+            }
+        }
+
+        if (mypageDeliveryItems) {
+            mypageDeliveryItems.innerHTML = html;
+        }
+    }
+
+    // --- Dynamic Receipt Calculation ---
+    function updateReceipt() {
+        const basePrice = 48900;
+        let total = basePrice;
+        
+        let html = `
+            <div class="receipt-detail-row">
+                <span>▪️ 기본 정기 구독 (사료+영양제)</span>
+                <strong>${basePrice.toLocaleString()}원</strong>
+            </div>
+        `;
+        
+        // Add extra items
+        extraCheckboxes.forEach(checkbox => {
+            const card = checkbox.closest('.extra-item-card');
+            if (card) {
+                card.classList.toggle('checked', checkbox.checked);
+            }
+            
+            if (checkbox.checked) {
+                const price = parseInt(checkbox.getAttribute('data-price'));
+                const name = checkbox.getAttribute('data-name');
+                total += price;
+                html += `
+                    <div class="receipt-detail-row">
+                        <span>▪️ [이번달만 추가] ${name}</span>
+                        <strong>+${price.toLocaleString()}원</strong>
+                    </div>
+                `;
+            }
+        });
+        
+        // Update HTML
+        if (receiptDetailsRows) receiptDetailsRows.innerHTML = html;
+        if (receiptTotalPrice) receiptTotalPrice.textContent = `${total.toLocaleString()}원`;
+        // Update CTA button text and dynamic warning alert
+        const warningAlert = document.getElementById('receipt-warning-alert');
+        const extraPrice = total - basePrice;
+
+        if (extraPrice > 0) {
+            if (warningAlert) {
+                warningAlert.innerHTML = `💡 기본 구독료 ${basePrice.toLocaleString()}원에 이번 달 추가 구성품(+${extraPrice.toLocaleString()}원)이 더해졌습니다.`;
+                warningAlert.style.display = 'block';
+            }
+            if (btnSubscribe) {
+                btnSubscribe.innerHTML = `<i data-lucide="credit-card"></i> 이번 달 ${total.toLocaleString()}원 결제하고 구독 시작 (다음 달부터 월 ${basePrice.toLocaleString()}원)`;
+            }
+        } else {
+            if (warningAlert) {
+                warningAlert.style.display = 'none';
+            }
+            if (btnSubscribe) {
+                btnSubscribe.innerHTML = `<i data-lucide="credit-card"></i> 매월 ${basePrice.toLocaleString()}원에 정기 구독 시작하기`;
+            }
+        }
+        if (btnSubscribe) {
+            lucide.createIcons();
+        }
+        
+        // Update Caption
+        const isModified = Array.from(extraCheckboxes).some(cb => cb.checked);
+        if (receiptDetailsCaption) {
+            if (isModified) {
+                receiptDetailsCaption.innerHTML = `💡 <strong>알림:</strong> 추가하신 간식/용품은 이번 달 배송에만 1회성으로 포함되며, 다음 달부터는 기본 구독료(48,900원)만 결제됩니다.`;
+            } else {
+                receiptDetailsCaption.textContent = `※ 매달 기본 구독료 48,900원이 정기 결제됩니다.`;
+            }
+        }
+        
+        // Store total price in state
+        appState.totalCalculatedPrice = total;
+    }
+
+    // Bind change events to extra item checkboxes
+    extraCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            updateReceipt();
+        });
+    });
+
+    if (tabRecommend) {
+        tabRecommend.addEventListener('click', () => switchTab('recommend'));
+    }
+    if (tabMypage) {
+        tabMypage.addEventListener('click', () => switchTab('mypage'));
+    }
+    if (btnMypageToWizard) {
+        btnMypageToWizard.addEventListener('click', () => switchTab('recommend'));
     }
 
     // --- Form Event Listeners ---
@@ -376,23 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Upsell checkbox listener
-    upsellCheckbox.addEventListener('change', (e) => {
-        appState.upsellSelected = e.target.checked;
-        
-        // Dynamic price update in Step 5 Result Screen
-        const priceValEl = document.querySelector('.price-value');
-        if (priceValEl) {
-            if (appState.upsellSelected) {
-                priceValEl.innerHTML = '월 43,900원 <span class="original-price">58,900원</span>';
-            } else {
-                priceValEl.innerHTML = '월 39,000원 <span class="original-price">54,000원</span>';
-            }
-        }
 
-        // Re-render recommendation list to add/remove the gift pack
-        renderResults();
-    });
 
     // Prev Buttons
     prevButtons.forEach(btn => {
@@ -418,8 +672,28 @@ document.addEventListener('DOMContentLoaded', () => {
         resetWizard();
     });
 
+    // Swap item checkbox listener in My Page
+    if (swapNecessityCheckbox) {
+        swapNecessityCheckbox.addEventListener('change', () => {
+            updateDeliveryConfig();
+        });
+    }
+
     // Subscribe Complete Button
     btnSubscribe.addEventListener('click', () => {
+        appState.isSubscribed = true;
+        
+        // Determine subscription box title based on breed
+        const breedName = getBreedName();
+        const breedGroup = getBreedGroup(breedName);
+        if (breedGroup === 'joint') {
+            appState.subBoxTitle = "🦴 슬개골 튼튼 관절 케어 박스";
+        } else if (breedGroup === 'skin') {
+            appState.subBoxTitle = "🐟 반짝반짝 피모/체중 케어 박스";
+        } else {
+            appState.subBoxTitle = "🧬 장건강 면역 밸런스 박스";
+        }
+        
         // Go to success screen
         navigateToStep(6);
         
@@ -429,6 +703,25 @@ document.addEventListener('DOMContentLoaded', () => {
         // Start full screen confetti
         startConfetti();
     });
+
+    // Go to My Page from Success Step
+    if (btnGotoMypage) {
+        btnGotoMypage.addEventListener('click', () => {
+            switchTab('mypage');
+        });
+    }
+
+    // Cancel Subscription from My Page
+    if (btnCancelSubscription) {
+        btnCancelSubscription.addEventListener('click', () => {
+            if (confirm("정말로 정기 구독을 해지하시겠습니까?")) {
+                appState.isSubscribed = false;
+                alert("정기 구독이 해지되었습니다.");
+                resetWizard();
+                switchTab('recommend');
+            }
+        });
+    }
 
     // --- Breed Vulnerability Group Helper ---
     function getBreedGroup(breedName) {
@@ -603,8 +896,8 @@ document.addEventListener('DOMContentLoaded', () => {
             results.push({
                 tag: 'SPECIAL GIFT',
                 img: 'images/gift_pack.png',
-                title: '한정판 수제 노즈워크 토이 & 한우 져키 기획팩',
-                desc: '댕프레시 10만 돌파 기념! 정가 19,800원 상당의 프리미엄 토이와 영양 만점 수제 한우 우둔살 져키 세트'
+                title: '여름 맞이 해충방지 산책 팩',
+                desc: '여름철 야외 진드기와 모기로부터 반려견을 지켜주는 친환경 해충방지 스프레이 & 야간 산책용 LED 안전 조명 패키지'
             });
         }
 
@@ -657,6 +950,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Re-initialize dynamic Lucide icons if any
         lucide.createIcons();
+        
+        // Render dynamic receipt details on result page load
+        updateReceipt();
     }
 
     // --- AI Simulation Logic ---
@@ -717,11 +1013,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const breedName = getBreedName();
         receiptDogInfo.textContent = `${appState.dogName} (${breedName})`;
         
-        if (appState.upsellSelected) {
-            receiptPrice.textContent = '월 43,900원 (한정판 기획팩 포함)';
-        } else {
-            receiptPrice.textContent = '월 39,000원 (배송비 무료)';
-        }
+        receiptPrice.textContent = `월 ${appState.totalCalculatedPrice.toLocaleString()}원 (배송비 무료)`;
         
         // Delivery tracker texts
         deliveryDateText.textContent = `오늘 밤 10시 일괄 출고`;
@@ -737,13 +1029,21 @@ document.addEventListener('DOMContentLoaded', () => {
         appState.ageGroup = 'puppy';
         appState.healthConcerns = ['general'];
         appState.upsellSelected = false;
-        
-        if (upsellCheckbox) upsellCheckbox.checked = false;
+        appState.isSubscribed = false;
+        appState.subBoxTitle = '';
+        appState.totalCalculatedPrice = 48900;        if (swapNecessityCheckbox) {
+            swapNecessityCheckbox.checked = false;
+            updateDeliveryConfig();
+        }
+
+        // Reset extra checkboxes
+        extraCheckboxes.forEach(cb => cb.checked = false);
+        extraItemCards.forEach(card => card.classList.remove('checked'));
         
         // Reset Pricing display values in Step 5 Result Screen
         const priceValEl = document.querySelector('.price-value');
         if (priceValEl) {
-            priceValEl.innerHTML = '월 39,000원 <span class="original-price">54,000원</span>';
+            priceValEl.innerHTML = '월 48,900원 <span class="original-price">63,900원</span>';
         }
         
         // Reset Form Inputs
@@ -776,6 +1076,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Stop Confetti animation
         stopConfetti();
+
+        // Switch tab back to wizard
+        switchTab('recommend');
 
         // Navigate back to step 1
         navigateToStep(1);
